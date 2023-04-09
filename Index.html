@@ -4,15 +4,7 @@
     <meta charset="UTF-8">
     <title>My Stocks Dashboard</title>
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J4JZWC1E4X"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-
-        gtag('config', 'G-J4JZWC1E4X');
-    </script>
+    <!-- Google tag (gtag.js) goes somewhere around here -->
 </head>
 <body>
 
@@ -31,7 +23,6 @@
             <option value="GOOG">Google (GOOGL)</option>
             <option value="AAPL">Apple (AAPL)</option>
             <option value="TSLA">Tesla (TSLA)</option>
-            <option value"GME">Gamestop Yeah</option>
         </select>
         <br>
 
@@ -46,7 +37,6 @@
         <p>Selected Stock: <span id="display-stock-symbol">_____________</span></p>
         <p>Latest (Adjusted) Closing Price: <span id="display-latest-closing-price">__________</span></p>
     </div>
-    
 
     <div id="dataviz-container"></div>
 
@@ -73,20 +63,15 @@
             var symbol = stockSelector.value
             console.log("SYMBOL:", symbol)
 
-
-            gtag("event", "chart_update", {"symbol": symbol})
-
-
-
             // compiling request url, given form input values:
             var requestUrl = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=" + symbol + "&apikey=" + apiKey
-            // console.log("REQUEST URL:", requestUrl)
+            //console.log("REQUEST URL:", requestUrl)
 
             // issuing an HTTP request for the data:
             fetch(requestUrl).then(response => response.json()).then(responseData => {
                 console.log("DATA", responseData)
 
-                // processing the JSON response data:
+                // processing the specific JSON response data returned by the API server:
                 var tsd = responseData["Time Series (Daily)"]
 
                 var dates = Object.keys(tsd) //> an array of date keys, for the chart ["2020-01-27", "2020-01-24", "2020-01-23", etc.]
@@ -118,13 +103,19 @@
                 console.error("OOPS", err)
                 alert("OOPS, please check your inputs and try again.")
             })
+
+            // send event to GA (requires gtag setup in <head> section):
+            //gtag("event", "chart_update", {"symbol": symbol})
         }
 
+
         // trigger an initial chart update when the page loads:
-        updateDashboard()
+        //updateDashboard()
 
         // trigger a subsequent chart update whenever the button is clicked:
-        myButton.addEventListener("click", updateDashboard, false)
+        //myButton.addEventListener("click", updateDashboard, false)
+
+
 
     </script>
 </body>
