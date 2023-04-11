@@ -39,9 +39,8 @@
         <p>Latest (Adjusted) Closing Price: <span id="display-latest-closing-price">__________</span></p>
     </div>
 
+    <div id="myDiv"></div>
     <div id="dataviz-container"></div>
-
-
 
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script type="text/javascript">
@@ -82,8 +81,13 @@
                 var earliestDate = dates[dates.length - 1]
                 console.log("DATE RANGE:", earliestDate, "-", latestDate)
 
+                var highPrices = prices.map(obj => parseFloat(obj["2. high"])) //> an array of prices, for the chart
                 var closingPrices = prices.map(obj => parseFloat(obj["5. adjusted close"])) //> an array of prices, for the chart
+                var openPrices = prices.map(obj => parseFloat(obj["1. open"])) //> an array of prices, for the chart
+                var lowPrices = prices.map(obj => parseFloat(obj["3. low"])) //> an array of prices, for the chart
+
                 var latestClose = closingPrices[0]
+                
                 var latestCloseUSD = "$" + latestClose.toFixed(2) // formatting the number with dollar sign and rounding to two decimal places
                 console.log("LATEST CLOSE:", latestCloseUSD)
 
@@ -98,6 +102,57 @@
                     {x: dates, y: closingPrices, mode: "lines+markers"}
                 ]
                 Plotly.newPlot("dataviz-container", chartData, layout, {responsive: true})
+                var trace1 = {
+  
+  x: dates, 
+  
+  close: closingPrices, 
+  
+  decreasing: {line: {color: '#7F7F7F'}}, 
+  
+  high: highPrices, 
+  
+  increasing: {line: {color: '#17BECF'}}, 
+  
+  line: {color: 'rgba(31,119,180,1)'}, 
+  
+  low: lowPrices,
+  
+  open: openPrices,
+  
+  type: 'candlestick', 
+  xaxis: 'x', 
+  yaxis: 'y'
+};
+
+var data = [trace1];
+
+var layout = {
+  dragmode: 'zoom', 
+  margin: {
+    r: 10, 
+    t: 25, 
+    b: 40, 
+    l: 60
+  }, 
+  showlegend: false, 
+  xaxis: {
+    autorange: true, 
+    domain: [0, 1], 
+    range: ['2017-01-03 12:00', '2017-02-15 12:00'], 
+    rangeslider: {range: ['2017-01-03 12:00', '2017-02-15 12:00']}, 
+    title: 'Date', 
+    type: 'date'
+  }, 
+  yaxis: {
+    autorange: true, 
+    domain: [0, 1], 
+    range: [114.609999778, 137.410004222], 
+    type: 'linear'
+  }
+};
+
+Plotly.newPlot('myDiv', data, layout);
 
             // this will get triggered if there was an error in the request or charting process:
             }).catch(function(err){
@@ -107,6 +162,7 @@
 
             // send event to GA (requires gtag setup in <head> section):
             //gtag("event", "chart_update", {"symbol": symbol})
+
         }
 
 
